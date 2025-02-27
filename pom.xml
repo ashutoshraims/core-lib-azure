@@ -64,7 +64,7 @@
     <jakarta.servlet.version>6.0.0</jakarta.servlet.version>
     <jakarta.inject.version>2.0.1</jakarta.inject.version>
     <json.version>20231013</json.version>
-    <log4j-slf4j-impl.version>2.24.2</log4j-slf4j-impl.version>
+    <log4j-slf4j-impl.version>2.24.3</log4j-slf4j-impl.version>
     <resilience4j.version>2.0.0</resilience4j.version>
     <redisson.version>3.40.2</redisson.version>
     <guava.version>33.3.1-jre</guava.version>
