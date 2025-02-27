@@ -65,8 +65,8 @@
     <jakarta.inject.version>2.0.1</jakarta.inject.version>
     <json.version>20231013</json.version>
     <log4j-slf4j-impl.version>2.24.2</log4j-slf4j-impl.version>
-    <resilience4j.version>2.0.0</resilience4j.version>
-    <redisson.version>3.40.2</redisson.version>
+    <resilience4j.version>2.3.0</resilience4j.version>
+    <redisson.version>3.45.0</redisson.version>
     <guava.version>33.3.1-jre</guava.version>
 
     <!-- Plugin Versions -->
@@ -75,8 +75,8 @@
     <checkstyle-plugin.version>3.1.0</checkstyle-plugin.version>
 
     <!-- Security fixes -->
-    <lettuce.version>6.5.1.RELEASE</lettuce.version>
-    <netty.version>4.1.118.Final</netty.version>
+    <lettuce.version>6.5.4.RELEASE</lettuce.version>
+    <netty.version>4.1.119.Final</netty.version>
   </properties>
 
 
