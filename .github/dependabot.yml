@@ -20,13 +20,6 @@ updates:
         update-types:
           - "patch"
           - "minor"
-      osdu-core:
-        patterns:
-          - "org.opengroup.osdu:os-core-common"
-        update-types:
-          - "patch"
-          - "minor"
-          - "major"
       azure:
         patterns:
           - "com.azure*"
