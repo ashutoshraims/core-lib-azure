@@ -1,141 +1,124 @@
-# Fork Management Template
+Copyright 2017-2019 Schlumberger
 
-This repository provides an automated template for managing long-lived forks of upstream repositories, ensuring controlled synchronization and release management. For detailed design and requirements, see the [Product Requirements Document](doc/prd.md).
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
 
-## Features
+     http://www.apache.org/licenses/LICENSE-2.0
 
-This template automates the process of maintaining a fork while keeping it updated with upstream changes. When you create a repository from this template, it will:
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 
-- Set up a structured branch strategy for controlled upstream synchronization
-- Configure automated workflows to handle syncing, validation, and releases
-- Enforce branch protection rules to maintain repository integrity
-- Manage releases with semantic versioning and upstream tracking
+# Introduction
 
-## Prerequisites
+This repository houses code that is used across the Microsoft Azure hosted OSDU and OpenDES platforms. The intention of this repository is to minimize code duplication for common scenarios such as dependency configuration for services in Azure (KeyVault, Cosmos, Storage and others).
+ 
+# Pre-requisites
 
-Before starting, ensure you have:
-- GitHub account with repository creation permissions
-- Personal Access Token (PAT) with required permissions:
-  - `repo` (Full control of private repositories)
-  - `workflow` (Update GitHub Action workflows)
-  - `admin:repo_hook` (Full control of repository hooks)
+You need
 
-## Quick Start
+- [Maven 3.8.0+](https://maven.apache.org/download.cgi)
+- [JDK17](https://adoptopenjdk.net/)
 
-### 1. Create New Repository
-1. Click the "Use this template" button above
-2. Choose a name and owner for your new repository
-3. Create repository
+# Local Usage
 
-### 2. Initialize Repository
-1. Go to Actions → Select "Initialize Fork" → Click "Run workflow" (if not already running)
-2. An initialization issue will appear in the Issues tab
-3. Follow the instructions in the issue from the bot to complete setup
+```bash
+# Compile the codebase
+$ mvn compile
+...
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+...
 
-## Branch Structure
-
-The permanent branches control how upstream updates flow through validation before reaching the main branch:
-
-```
-             ┌────────────────────────┐
-             │ fork_upstream          │
-             │ (Tracks Upstream)      │
-             └────────────────────────┘
-                      ↓
-             ┌───────────────────────┐
-             │ fork_integration      │
-             │ (Conflict Resolution) │
-             └───────────────────────┘
-                      ↓
-             ┌───────────────────────┐
-             │ main                  │
-             │ (Stable)              │
-             └───────────────────────┘
-              ↑                     ↑
-        Feature Branches       Certified Tags
-        (Feature1, etc.)      (Downstream Pull)
+# Unit test the codebase
+$ mvn test
+...
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+...
 ```
 
-## Automated Workflows
+# Getting started guide
 
-These workflows keep your fork in sync, enforce validation rules, and manage releases automatically:
+##Installation
 
-### 1. Upstream Sync
-- Scheduled automatic sync from upstream repository
-- Manual sync available via Actions tab
-- Automated conflict detection and notification
-- [Details →](doc/sync-workflow.md)
+You need to connect to our feed on [Azure DevOps](https://slb-swt.visualstudio.com/data-at-rest/ProdOps%20-%20Production%20Engineer/_packaging?feed=slb-dps&_a=feed) and add the artifact `core-lib-azure` as a dependency to your Maven or Gradle build.
 
-### 2. Validation
-- Enforces commit format and branch status
-- Prevents merging of invalid PRs
-- Ensures code quality and consistency
-- [Details →](doc/validation-workflow.md)
+**Example**
 
-### 3. Release Management
-- Automated versioning and changelogs
-- Tracks upstream versions with release tags
-- [Details →](doc/release-workflow.md)
-
-## Development Workflow
-
-```mermaid
-gitGraph
-    checkout main
-    commit id: "Init Repo" tag: "0.0.0"
-
-    branch upstream
-    checkout upstream
-    commit id: "Upstream Sync 1" tag: "upstream-v1.0.0"
-
-    checkout main
-    branch integration
-    checkout integration
-
-
-    merge upstream 
-
-
-    commit id: "Bugfix 1"
-
-    checkout upstream
-    commit id: "Upstream Sync 2" tag: "upstream-v2.0.0"
-
-    checkout integration
-    merge upstream
-
-
-    commit id: "Bugfix 2"
-
-    checkout main
-    commit id: "Feature Work 1" tag: "0.0.1"
-    commit id: "Feature Work 2" tag: "0.1.0"
-
-    merge integration tag: "2.0.0"
-
-    commit id: "Feature Work 3" tag: "2.1.1"
-    commit id: "Feature Work 4" tag: "2.1.2"
-
+```xml
+<project>
+    <properties>
+        <azure.corelib.version>0.0.1</azure.corelib.version>
+    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>org.opengroup.osdu</groupId>
+            <artifactId>core-lib-azure</artifactId>
+            <version>${azure.corelib.version}</version>
+        </dependency>
+    </dependencies>
+</project>
 ```
+- If you wish to see the code coverage report then go to job artifacts browse/target/site/jacoco and open index.html
 
-### 1. Feature Development
-1. Branch from main: `git checkout -b feature/my-feature main`
-2. Make changes and test
-3. Use conventional commits:
-   ```
-   feat: new feature
-   fix: bug fix
-   feat!: breaking change
-   ```
-4. Create PR → Review → Merge
+##Changes to support newly Added transaction logger and slf4jlogger
+The consumer service might run into multiple logger bindings error on start up
+which can be fixed by excluding some of the logger dependencies.
 
-### 2. Upstream Sync Process
-1. Auto-sync PR created daily
-2. Review changes
-3. Resolve conflicts if needed
-4. Merge sync PR
+Note: Below are reference PRs for exclusion and might change from service to service
 
-### 3. Release Process
-1. Merge to main with conventional commits
-2. Release Please handles versioning and changelog
-3. Release includes upstream version tracking
+Refer this [MR](https://community.opengroup.org/osdu/platform/security-and-compliance/entitlements-azure/-/merge_requests/13) as reference on how to exclude dependencies along with how to enable the 
+Enabled transaction logger and slf4jlogger
+
+## Environment variables to be added in application.properties to consume the TenantFactoryImpl
+| name | value | description |
+| ---  | ---   | ---         |
+| `tenantInfo.container.name` | `TenantInfo` | cosmos container name |
+| `azure.cosmosdb.database` | ex `dev-osdu-r2-db` | cosmos database name |
+| `tenantFactoryImpl.required` | ex `true` | Set this property to true in order to consume TenantFactoryImpl class from core-lib-azure |
+
+## Settings to be added in application.properties to consume the BlobStore
+| name | value | description |
+| ---  | ---   | ---         |
+| `azure.blobStore.required` | `true` | - |
+| `azure.storage.account-name` | ex `testStorage` | storage account name |
+
+# Default retry and timeout values for service-to-service communication
+| name | default value |
+| ---  | ---   | 
+| `maxRetry` | `3` |
+| `connectTimeout` | `60000` |
+| `requestTimeout` | `60000` |
+| `socketTimeout` | `60000` |
+
+# CircuitBreaker configuration 
+To enable circuitbreaker, set azure.circuitbreaker.enable=true in application.properties
+
+| name | default value | description |
+| ---  | ---           | ---         |   
+| `azure.circuitbreaker.enable` | `false` | To enable circuitbreaker in your service |
+| `azure.circuitbreaker.defaultCircuitBreaker` | `false` | True if you wish to use default circuitbreaker values set by resilience4j
+| `azure.circuitbreaker.slidingWindowSize` | `50` | For COUNT_BASED, it's the number of calls to consider to calculate failure rate, for TIME_BASED, it's the number of seconds to consider to calculate failure rate.|
+| `azure.circuitbreaker.minimumNumberOfCalls` | `50` | Minimum number of calls in the slidingWindowSize to consider calculating failure rate. |
+| `azure.circuitbreaker.failureRate` | `50` | Failure threshold rate |
+| `azure.circuitbreaker.slidingWindowType` | `TIME_BASED` | TIME_BASED or COUNT_BASED |
+| `azure.circuitbreaker.permittedCallsInHalfOpenState` | `10` | Number of calls in Half Open State to decide the next state.|
+
+To read more about Circuitbreaker, please refer to https://resilience4j.readme.io/docs/circuitbreaker
+
+## CircuitBreaker Functioning
+The basic idea behind the circuit breaker is very simple. You wrap a protected function call in a circuit breaker object, which monitors for failures. Once the failures reach a certain threshold, the circuit breaker trips, and all further calls to the circuit breaker return with an error, without the protected call being made at all.
+
+All HTTP calls made by services will go through the circuitbreaker. If circuitbreaker detects failures and it crosses threshold, The APIs will start throwing Error 500 : Service Unavailable. The circuit will be open for a certain duration and then move to half open state. It will then assess whether to move to a closed state or open state. The diagram below depicts the state diagram for circuitbreaker.
+![Alt text](docs/circuitbreakerstatediagram.png "Circuitbreaker State Diagram")
+
+
+[Credits : Martin Fowler(https://martinfowler.com/bliki/CircuitBreaker.html)]
+
+

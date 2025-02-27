@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright © Microsoft Corporation
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<Configuration packages="com.microsoft.applicationinsights.log4j.v2,com.microsoft.azure.oak.ifxaudit" strict="true">
+    <Scripts>
+        <Script name="isAiAppenderEnabled" language="nashorn"><![CDATA[
+            var System = Java.type('java.lang.System'),
+                Boolean = Java.type('java.lang.Boolean');
+            Boolean.parseBoolean(System.getProperty('APPINSIGHTS_LOGGING_ENABLED', 'true'));
+            ]]>
+        </Script>
+        <Script name="isAuditAppenderEnabled" language="nashorn"><![CDATA[
+            var System = Java.type('java.lang.System'),
+                Boolean = Java.type('java.lang.Boolean');
+            Boolean.parseBoolean(System.getProperty('AZURE_AUDIT_ENABLED', 'false'));
+            ]]>
+        </Script>
+    </Scripts>
+
+        <Properties>
+            <Property name="LOG_PATTERN">
+                %d{yyyy-MM-dd HH:mm:ss.SSS} %5p ${hostName} --- [%15.15t] %-40.40c{1.} correlation-id=%X{correlation-id} data-partition-id=%X{data-partition-id} api-method=%X{api-method} operation-name=%X{operation-name} user-id=%X{user-id} app-id=%X{app-id}: %m%xEx{full}{filters(org.apache,org.springframework,sun.reflect,jakarta.servlet)}{separator(|)}%n"
+            </Property>
+        </Properties>
+        <Appenders>
+            <Console name="Console" target="SYSTEM_OUT">
+                <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %5p ${hostName} --- [%15.15t] %-40.40c{1.} correlation-id=%X{correlation-id} data-partition-id=%X{data-partition-id} api-method=%X{api-method} operation-name=%X{operation-name} user-id=%X{user-id} app-id=%X{app-id}:%m%xEx{full}{filters(org.apache,org.springframework,sun.reflect,jakarta.servlet)}{separator(|)}%n"/>
+            </Console>
+            <ApplicationInsightsAppender name="aiAppender" />
+            <AzureIfxAuditAppender name="azureAuditAppender"/>
+        </Appenders>
+        <Loggers>
+    <!--        TODO: In future it will be changed to warn-->
+        <Root level="info">
+            <AppenderRef ref="Console"  />
+            <AppenderRef ref="aiAppender">
+                <ScriptFilter onMatch="ACCEPT" onMisMatch="DENY">
+                    <ScriptRef ref="isAiAppenderEnabled" />
+                </ScriptFilter>
+            </AppenderRef>
+        </Root>
+        <logger name="TxnLogger" level="info" additivity="false">
+            <AppenderRef ref="Console"  />
+            <AppenderRef ref="aiAppender">
+                <ScriptFilter onMatch="ACCEPT" onMisMatch="DENY">
+                    <ScriptRef ref="isAiAppenderEnabled" />
+                </ScriptFilter>
+            </AppenderRef>
+        </logger>
+        <logger name="AzureAuditLogger">
+            <AppenderRef ref="Console" />
+            <AppenderRef ref="azureAuditAppender">
+                <ScriptFilter onMatch="ACCEPT" onMisMatch="DENY">
+                    <ScriptRef ref="isAuditAppenderEnabled" />
+                </ScriptFilter>
+            </AppenderRef>
+        </logger>
+        <logger name="com.microsoft.azure.servicebus.primitives.CoreMessageReceiver" level="info">
+            <Filters>
+                <ThresholdFilter level="warn"  onMatch="ACCEPT" onMismatch="NEUTRAL"/>
+                <RegexFilter regex="No messages received from .*\. Pending receive request timed out\. Returning null to the client\." onMatch="DENY" onMismatch="NEUTRAL"/>
+            </Filters>
+        </logger>
+    </Loggers>
+</Configuration>
