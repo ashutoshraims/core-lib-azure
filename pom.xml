@@ -46,12 +46,12 @@
 
     <!-- Spring Boot Framework 6.2.0 compatable with Spring Boot 3.4.0 -->
     <!-- https://spring.io/blog/2024/11/14/spring-framework-6-2-0-available-now -->
-    <spring-framework.version>6.2.1</spring-framework.version>
-    <spring-boot-dependencies.version>3.4.1</spring-boot-dependencies.version>
+    <spring-framework.version>6.2.3</spring-framework.version>
+    <spring-boot-dependencies.version>3.4.3</spring-boot-dependencies.version>
 
     <azure-sdk-bom.version>1.2.31</azure-sdk-bom.version>
     <azure-spring-boot.version>5.19.0</azure-spring-boot.version>
-    <springdoc-openapi-starter-webmvc-ui.version>2.7.0</springdoc-openapi-starter-webmvc-ui.version>
+    <springdoc-openapi-starter-webmvc-ui.version>2.8.5</springdoc-openapi-starter-webmvc-ui.version>
 
     <microsoft-graph.version>6.23.0</microsoft-graph.version>
     <azure.appinsights.version>3.6.2</azure.appinsights.version>
@@ -64,19 +64,15 @@
     <jakarta.servlet.version>6.0.0</jakarta.servlet.version>
     <jakarta.inject.version>2.0.1</jakarta.inject.version>
     <json.version>20231013</json.version>
-    <log4j-slf4j-impl.version>2.24.2</log4j-slf4j-impl.version>
-    <resilience4j.version>2.0.0</resilience4j.version>
-    <redisson.version>3.40.2</redisson.version>
-    <guava.version>33.3.1-jre</guava.version>
+    <log4j-slf4j-impl.version>2.24.3</log4j-slf4j-impl.version>
+    <resilience4j.version>2.3.0</resilience4j.version>
+    <redisson.version>3.45.0</redisson.version>
+    <guava.version>33.4.0-jre</guava.version>
 
     <!-- Plugin Versions -->
     <surefire-plugin.version>2.22.2</surefire-plugin.version>
     <jacoco-plugin.version>0.8.8</jacoco-plugin.version>
     <checkstyle-plugin.version>3.1.0</checkstyle-plugin.version>
-
-    <!-- Security fixes -->
-    <lettuce.version>6.5.1.RELEASE</lettuce.version>
-    <netty.version>4.1.118.Final</netty.version>
   </properties>
 
 
@@ -126,30 +122,6 @@
       </dependency>
       <!-- End of BOMs -->
       <!-- Dependencies, after the BOMs -->
-      <dependency>
-          <groupId>io.lettuce</groupId>
-          <artifactId>lettuce-core</artifactId>
-          <version>${lettuce.version}</version>
-          <!-- Overriding version to fix GHSA-q4h9-7rxj-7gx2
-              Spring Boot 3.4.0 uses lettuce-core 6.4.1 which is vulnerable to Redis Command Injection -->
-      </dependency>
-      <!-- Security fixes -->
-      <dependency>
-        <groupId>io.netty</groupId>
-        <artifactId>netty-handler</artifactId>
-        <version>${netty.version}</version>
-        <!-- Overriding version to fix CVE-2024-24970
-            Netty before 4.1.108 is vulnerable to HTTP Request Smuggling.
-            This could lead to cache poisoning, security bypass, and request forgery. -->
-      </dependency>
-      <dependency>
-        <groupId>net.minidev</groupId>
-        <artifactId>json-smart</artifactId>
-        <version>2.5.2</version>
-        <!-- Overriding version to fix CVE-2024-57699
-            json-smart before 2.5.2 is vulnerable to Denial of Service (DoS) -->
-      </dependency>
-      <!-- Security fixes -->
     </dependencies>
   </dependencyManagement>
 
