@@ -42,7 +42,7 @@
     <repos.id>os-core</repos.id>
     <repos.url>https://pkgs.dev.azure.com/slb-des-ext-collaboration/_packaging/os-core/maven/v1</repos.url>
 
-    <osdu.oscorecommon.version>3.3.0</osdu.oscorecommon.version>
+    <osdu.oscorecommon.version>3.4.1</osdu.oscorecommon.version>
 
     <!-- Spring Boot Framework 6.2.0 compatable with Spring Boot 3.4.0 -->
     <!-- https://spring.io/blog/2024/11/14/spring-framework-6-2-0-available-now -->
@@ -60,19 +60,19 @@
     <azure-mgmt-eventgrid.version>1.0.0-beta-4</azure-mgmt-eventgrid.version>
 
     <!-- Misc Library Versions -->
-    <io.micrometer.version>1.14.1</io.micrometer.version>
-    <jakarta.servlet.version>6.0.0</jakarta.servlet.version>
+    <io.micrometer.version>1.14.4</io.micrometer.version>
+    <jakarta.servlet.version>6.1.0</jakarta.servlet.version>
     <jakarta.inject.version>2.0.1</jakarta.inject.version>
-    <json.version>20231013</json.version>
+    <json.version>20250107</json.version>
     <log4j-slf4j-impl.version>2.24.2</log4j-slf4j-impl.version>
     <resilience4j.version>2.0.0</resilience4j.version>
     <redisson.version>3.40.2</redisson.version>
     <guava.version>33.3.1-jre</guava.version>
 
     <!-- Plugin Versions -->
-    <surefire-plugin.version>2.22.2</surefire-plugin.version>
-    <jacoco-plugin.version>0.8.8</jacoco-plugin.version>
-    <checkstyle-plugin.version>3.1.0</checkstyle-plugin.version>
+    <surefire-plugin.version>3.5.2</surefire-plugin.version>
+    <jacoco-plugin.version>0.8.12</jacoco-plugin.version>
+    <checkstyle-plugin.version>3.6.0</checkstyle-plugin.version>
 
     <!-- Security fixes -->
     <lettuce.version>6.5.1.RELEASE</lettuce.version>
